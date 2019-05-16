@@ -2,6 +2,10 @@
 
 Kubernetes configurations manager, merges kubernetes configurations from a file into your `~/.kube/config`
 
+## Build
+
+- `go build -o dist/kconf .`
+
 ## TODO
 
 - [ ] Write tests
