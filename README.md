@@ -4,7 +4,7 @@ Kubernetes config files are simple enought if you have only one context, when th
 
 Kconf let you have a bunch of config files, with only one context and then squish then for you, so you don't have to edit a ever more larger kubernetes config
 
-Kconf make this:
+Kconf takes files like this:
 ```
 # $HOME/.helm/configs/context-1
 apiVersion: v1
@@ -39,7 +39,7 @@ contexts:
     cluster: cluster-2
 current-context: context-2
 ```
-Into this:
+And make then into this:
 ```
 # $HOME/.helm/config
 apiVersion: v1
