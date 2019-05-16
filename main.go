@@ -34,7 +34,7 @@ type kubeConfig struct {
 }
 
 var (
-	version = "1.0.0"
+	version = "1.0.1"
 )
 
 func main() {
@@ -64,9 +64,10 @@ func main() {
 		}),
 	}
 	app := &cli.App{
-		Action: run,
-		Before: altsrc.InitInputSourceWithContext(flags, altsrc.NewYamlSourceFromFlagFunc("config")),
-		Flags:  flags,
+		Action:  run,
+		Version: version,
+		Before:  altsrc.InitInputSourceWithContext(flags, altsrc.NewYamlSourceFromFlagFunc("config")),
+		Flags:   flags,
 	}
 
 	app.Run(os.Args)
