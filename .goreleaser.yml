@@ -1,0 +1,13 @@
+builds:
+  - binary: kconf
+    main: main.go
+    goos:
+      - linux
+      - freebsd
+      - windows
+    goarch:
+      - amd64
+      - arm
+      - arm64
+    env:
+      - CGO_ENABLED=0

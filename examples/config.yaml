@@ -1,0 +1,3 @@
+configs: /home/yuri/Workspace/src/github.com/yurifrl/kconf/examples/configs
+kubernetes:
+  config: /home/yuri/Workspace/src/github.com/yurifrl/kconf/examples/config

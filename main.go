@@ -5,12 +5,16 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/user"
+	"path/filepath"
 
+	cli "gopkg.in/urfave/cli.v2"
+	"gopkg.in/urfave/cli.v2/altsrc"
 	yaml "gopkg.in/yaml.v2"
 )
 
 // T ...
-type T struct {
+type kubeConfig struct {
 	APIVersion     string      `yaml:"apiVersion"`
 	CurrentContext string      `yaml:"current-context"`
 	Kind           string      `yaml:"kind"`
@@ -29,29 +33,67 @@ type T struct {
 	} `yaml:"users"`
 }
 
+var (
+	version = "0.0.0"
+)
+
 func main() {
-	// configs := fmt.Sprintf("/keybase/private/%s/kconf", os.Getenv("USER"))
-	configs := fmt.Sprintf("/keybase/private/%s/kconf", "yurifrl")
-	config := fmt.Sprintf("%s/.kube/config", os.Getenv("HOME"))
+	usr, err := user.Current()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	flags := []cli.Flag{
+		&cli.StringFlag{
+			Name:    "config",
+			Aliases: []string{"c"},
+			Usage:   "Load configuration from `FILE`",
+			Value:   filepath.FromSlash(usr.HomeDir + "/.kconf/config.yaml"),
+		},
+		altsrc.NewStringFlag(&cli.StringFlag{
+			Name:    "configs",
+			Usage:   "Configs source file for kubebernetes configs",
+			EnvVars: []string{"CONFIGS"},
+			Value:   filepath.FromSlash(usr.HomeDir + "/.kconf/configs"),
+		}),
+		altsrc.NewStringFlag(&cli.StringFlag{
+			Name:    "kubernetes.config",
+			Usage:   "Path for kubernetes config file that will receive the sources",
+			EnvVars: []string{"KUBE_CONFIG"},
+			Value:   filepath.FromSlash(usr.HomeDir + "/.kube/config"),
+		}),
+	}
+	app := &cli.App{
+		Action: run,
+		Before: altsrc.InitInputSourceWithContext(flags, altsrc.NewYamlSourceFromFlagFunc("config")),
+		Flags:  flags,
+	}
+
+	app.Run(os.Args)
+}
+
+func run(c *cli.Context) (err error) {
+	configs := c.String("configs")
+	config := c.String("kubernetes.config")
 	files, err := ioutil.ReadDir(configs)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	master := T{
+	master := kubeConfig{
 		APIVersion:     "v1",
 		CurrentContext: "",
 		Kind:           "Config",
 	}
-	buffer := T{}
+	buffer := kubeConfig{}
 	for _, f := range files {
 		file := fmt.Sprintf("%s/%s", configs, f.Name())
 		bs, err := ioutil.ReadFile(file)
 		if err != nil {
-			panic(err)
+			return err
 		}
 		if err := yaml.Unmarshal(bs, &buffer); err != nil {
-			panic(err)
+			return err
 		}
 
 		// Current context will be the last
@@ -63,10 +105,11 @@ func main() {
 
 	bs, err := yaml.Marshal(master)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	if err := ioutil.WriteFile(config, bs, 0644); err != nil {
-		panic(err)
+		return err
 	}
-	fmt.Println("File merged")
+	log.Println("File merged")
+	return err
 }
