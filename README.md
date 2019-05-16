@@ -66,6 +66,8 @@ contexts:
 current-context: context-1
 ```
 
+Kconf will not backup your `$HOME/.kube/config` make a copy just in case you need it latter
+
 ## Usage
 
 - Download a release from `https://github.com/yurifrl/kconf/releases`
