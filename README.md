@@ -1,8 +1,10 @@
 # Kconf
 
 Kubernetes config files are simple enought if you have only one context, when the number of contexts goes up so it's the difficulty to manage then.
-kconf let you have a bunch of config files, with only one context and then squish then for you, so you don't have to edit a ever more larger kubernetes config
-kconf make this:
+
+Kconf let you have a bunch of config files, with only one context and then squish then for you, so you don't have to edit a ever more larger kubernetes config
+
+Kconf make this:
 ```
 # $HOME/.helm/configs/context-1
 apiVersion: v1
