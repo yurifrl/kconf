@@ -13,7 +13,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-// T ...
+// KubeConfig ...
 type kubeConfig struct {
 	APIVersion     string      `yaml:"apiVersion"`
 	CurrentContext string      `yaml:"current-context"`
@@ -22,19 +22,19 @@ type kubeConfig struct {
 	Clusters       []struct {
 		Name    string      `yaml:"name"`
 		Cluster interface{} `yaml:"cluster"`
-	} `yaml:"clusters"`
+	} `yaml:"clusters,omitempty"`
 	Contexts []struct {
 		Name    string      `yaml:"name"`
 		Context interface{} `yaml:"context"`
-	} `yaml:"contexts"`
+	} `yaml:"contexts,omitempty"`
 	Users []struct {
 		Name string      `yaml:"name"`
 		User interface{} `yaml:"user"`
-	} `yaml:"users"`
+	} `yaml:"users,omitempty"`
 }
 
 var (
-	version = "0.0.0"
+	version = "1.0.0"
 )
 
 func main() {
@@ -97,12 +97,26 @@ func run(c *cli.Context) (err error) {
 		}
 
 		// Current context will be the last
-		master.CurrentContext = buffer.CurrentContext
-		master.Clusters = append(master.Clusters, buffer.Clusters[0])
-		master.Contexts = append(master.Contexts, buffer.Contexts[0])
-		master.Users = append(master.Users, buffer.Users[0])
+		if len(buffer.CurrentContext) > 0 {
+			master.CurrentContext = buffer.CurrentContext
+		}
+		if buffer.Preferences != "" {
+			master.Preferences = buffer.Preferences
+		}
+		if len(buffer.Clusters) > 0 {
+			master.Clusters = append(master.Clusters, buffer.Clusters[0])
+		}
+		if len(buffer.Contexts) > 0 {
+			master.Contexts = append(master.Contexts, buffer.Contexts[0])
+		}
+		if len(buffer.Users) > 0 {
+			master.Users = append(master.Users, buffer.Users[0])
+		}
 	}
 
+	if len(master.Contexts) > 0 {
+		master.CurrentContext = master.Contexts[0].Name
+	}
 	bs, err := yaml.Marshal(master)
 	if err != nil {
 		return err
