@@ -34,7 +34,7 @@ type kubeConfig struct {
 }
 
 var (
-	version = "1.0.3"
+	version = "1.0.4"
 )
 
 func main() {
@@ -85,10 +85,11 @@ func run(c *cli.Context) (err error) {
 		CurrentContext: "",
 		Kind:           "Config",
 	}
-	buffer := kubeConfig{}
 	for _, f := range files {
+		buffer := kubeConfig{}
 		file := fmt.Sprintf("%s/%s", configs, f.Name())
 		bs, err := ioutil.ReadFile(file)
+		fmt.Println(file)
 		if err != nil {
 			fmt.Println(err)
 			return err
