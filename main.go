@@ -34,7 +34,7 @@ type kubeConfig struct {
 }
 
 var (
-	version = "1.0.1"
+	version = "1.0.2"
 )
 
 func main() {
@@ -80,7 +80,6 @@ func run(c *cli.Context) (err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	master := kubeConfig{
 		APIVersion:     "v1",
 		CurrentContext: "",
@@ -91,9 +90,12 @@ func run(c *cli.Context) (err error) {
 		file := fmt.Sprintf("%s/%s", configs, f.Name())
 		bs, err := ioutil.ReadFile(file)
 		if err != nil {
+			fmt.Println(err)
 			return err
 		}
 		if err := yaml.Unmarshal(bs, &buffer); err != nil {
+			fmt.Println(file)
+			fmt.Println(err)
 			return err
 		}
 
