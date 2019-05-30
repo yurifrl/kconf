@@ -1,6 +1,6 @@
 # Kconf
 
-Kubernetes config files are simple enought if you have only one context, when the number of contexts goes up so it's the difficulty to manage then.
+Kubernetes config files are simple enough if you have only one context, when the number of contexts goes up so it's the difficulty to manage then.
 
 Kconf let you have a bunch of config files, with only one context and then squish then for you, so you don't have to edit a ever more larger kubernetes config
 
